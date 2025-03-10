@@ -29,6 +29,12 @@ namespace ECommerceAPI.Models
 
         public string? PhoneNumber { get; set; }
 
+        [Required]
+        public bool IsUser { get; set; }
+
+        public string? SessionId { get; set; }
+
+
         [Required, DataType(DataType.Time)]
         public DateTime CreatedAt { get; set; }
 

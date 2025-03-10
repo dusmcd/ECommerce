@@ -20,6 +20,8 @@ namespace ECommerceAPI.Data
 
         public DbSet<InventoryLog> InventoryLog { get; set; } = default!;
 
+        public DbSet<User> Users { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Order>()
