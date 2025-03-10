@@ -2,7 +2,7 @@
 
 namespace ECommerceAPI.Models
 {
-    public class ProductDTO
+    public class ProductDTO : DTO
     {
         public List<Order> Orders { get; set; } = new List<Order>();
 
@@ -19,9 +19,14 @@ namespace ECommerceAPI.Models
         [Required]
         public decimal Price { get; set; }
 
-        public void MapToModel(Product product)
+        public override void MapToModel<T>(T entity)
         {
-            product.Name = Name;
+
+            Product? product = entity as Product;
+            if (product == null)
+                return;
+
+            product!.Name = Name;
             product.Description = Description;
             product.Orders = Orders;
             product.Carts = Carts;

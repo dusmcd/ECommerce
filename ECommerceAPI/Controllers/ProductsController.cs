@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using ECommerceAPI.Data;
 using ECommerceAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ECommerceAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -14,6 +15,18 @@ namespace ECommerceAPI.Controllers
         public ProductsController(EcommerceAPIContext context)
         {
             _context = context;
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Product>>> SearchProducts(string? name)
+        {
+            if (name.IsNullOrEmpty())
+                return await _context.Products.ToListAsync();
+
+
+            name = name!.ToLower();
+            var products = _context.Products.Where(p => p.Name!.ToLower().Contains(name!));
+            return await products.ToListAsync();
         }
 
         [HttpGet]
