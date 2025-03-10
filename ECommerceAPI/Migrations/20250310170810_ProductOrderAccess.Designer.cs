@@ -4,6 +4,7 @@ using ECommerceAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceAPI.Migrations
 {
     [DbContext(typeof(EcommerceAPIContext))]
-    partial class EcommerceAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250310170810_ProductOrderAccess")]
+    partial class ProductOrderAccess
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Cart", (string)null);
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.Customer", b =>
@@ -98,7 +101,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.InventoryLog", b =>
@@ -125,7 +128,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("InventoryLog", (string)null);
+                    b.ToTable("InventoryLog");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.Order", b =>
@@ -167,7 +170,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.Product", b =>
@@ -200,7 +203,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.ProductCart", b =>
@@ -226,7 +229,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasIndex("ProductsId");
 
-                    b.ToTable("ProductsCarts", (string)null);
+                    b.ToTable("ProductsCarts");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.ProductOrder", b =>
@@ -255,7 +258,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductsOrders", (string)null);
+                    b.ToTable("ProductsOrders");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.User", b =>
@@ -290,7 +293,7 @@ namespace ECommerceAPI.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Models.Cart", b =>

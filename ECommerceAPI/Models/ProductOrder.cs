@@ -7,6 +7,14 @@ namespace ECommerceAPI.Models
     {
         public int Id { get; set; }
 
+        public int ProductId { get; set; }
+
+        public Product Product { get; set; } = default!;
+
+        public Order Order { get; set; } = default!;
+
+        public int OrderId { get; set; }
+
         [Column(TypeName = "decimal(3, 2)")]
         public decimal Discount { get; set; }
 

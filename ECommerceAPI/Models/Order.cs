@@ -23,10 +23,10 @@ namespace ECommerceAPI.Models
         [Required, DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
 
-        [Required, DataType(DataType.Date)]
+        [DataType(DataType.Date)]
         public DateTime FulfilledDate { get; set; }
         
-        [Required, DataType(DataType.Date)]
+        [DataType(DataType.Date)]
         public DateTime ShippedDate { get; set; }
 
         [Required, DataType(DataType.Time)]
