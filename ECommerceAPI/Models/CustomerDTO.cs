@@ -2,11 +2,8 @@
 
 namespace ECommerceAPI.Models
 {
-    public class Customer
+    public class CustomerDTO : DTO
     {
-        public int Id { get; set; }
-
-        [Required]
         public string? Name { get; set; }
 
         [Required]
@@ -33,11 +30,22 @@ namespace ECommerceAPI.Models
 
         public string? SessionId { get; set; }
 
+        public override void MapToModel<T>(T entity)
+        {
+            Customer? customer = entity as Customer;
+            if (customer == null)
+                return;
 
-        [Required, DataType(DataType.Time)]
-        public DateTime CreatedAt { get; set; }
-
-        [Required, DataType(DataType.Time)]
-        public DateTime UpdatedAt { get; set; }
+            customer.Name = Name;
+            customer.Email = Email;
+            customer.Address1 = Address1;
+            customer.Address2 = Address2;
+            customer.City = City;
+            customer.State = State;
+            customer.ZipCode = ZipCode;
+            customer.PhoneNumber = PhoneNumber;
+            customer.IsUser = IsUser;
+            customer.SessionId = SessionId;
+        }
     }
 }
