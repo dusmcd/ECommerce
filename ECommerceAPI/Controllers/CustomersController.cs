@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECommerceAPI.Data;
 using ECommerceAPI.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ECommerceAPI.Controllers
 {
@@ -25,6 +26,16 @@ namespace ECommerceAPI.Controllers
                 return await _context.Customers.Take(limit).ToArrayAsync();
            }
             return await _context.Customers.ToListAsync();
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Customer>>> SearchCustomers(string? name)
+        {
+            if (name.IsNullOrEmpty())
+                return await _context.Customers.ToListAsync();
+
+            name = name!.ToLower();
+            return await _context.Customers.Where(c => c.Name!.ToLower().Contains(name)).ToListAsync();
         }
 
         private Customer ProcessCustomer(CustomerDTO customerDTO)
@@ -62,6 +73,49 @@ namespace ECommerceAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Created();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCustomer(int id, CustomerDTO customerDTO)
+        {
+            if (id == 0 || customerDTO == null)
+                return BadRequest();
+
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
+                return NotFound();
+
+            try
+            {
+                customerDTO.MapToModel(customer);
+                _context.Customers.Update(customer);
+                customer.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return Ok();
+            } catch(DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomer(int id)
+        {
+            if (id == 0)
+                return BadRequest();
+
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
+                return NotFound();
+            try
+            {
+                _context.Customers.Remove(customer);
+                await _context.SaveChangesAsync();
+                return Ok();
+            } catch(DbUpdateConcurrencyException)
+            {
+                throw;
+            }
         }
 
         

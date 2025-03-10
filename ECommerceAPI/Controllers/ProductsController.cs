@@ -32,14 +32,11 @@ namespace ECommerceAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int limit = -1)
         {
-            IEnumerable<Product> products;
             if (limit > 0)
             {
-                products = _context.Products.Take(limit);
-                return products.ToArray();
+                return await _context.Products.Take(limit).ToListAsync();
             }
-            products = await _context.Products.ToListAsync();
-            return Ok(products);
+            return await _context.Products.ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -59,8 +56,9 @@ namespace ECommerceAPI.Controllers
         {
             Product product = new Product();
             productDTO.MapToModel(product);
-            product.CreatedAt = DateTime.UtcNow;
-            product.UpdatedAt = DateTime.UtcNow;
+            DateTime timeNow = DateTime.UtcNow;
+            product.CreatedAt = timeNow;
+            product.UpdatedAt = timeNow;
 
             return product;
         }
