@@ -42,6 +42,20 @@ namespace ECommerceAPI.Controllers
             order.ShippedDate = reader.GetDateTime("ShippedDate");
             order.FulfilledDate = reader.GetDateTime("FulfilledDate");
 
+            int orderStatus = reader.GetInt32("OrderStatus");
+            switch(orderStatus)
+            {
+                case 0:
+                    order.OrderStatus = Status.Pending;
+                    break;
+                case 1:
+                    order.OrderStatus = Status.Shipped;
+                    break;
+                case 2:
+                    order.OrderStatus = Status.Fulfilled;
+                    break;
+            }
+
             Customer customer = new Customer()
             {
                 Id = reader.GetInt32("CustomerId"),
@@ -227,6 +241,38 @@ namespace ECommerceAPI.Controllers
             return Ok();
 
         }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int id, Status status)
+        {
+            if (id == 0)
+                return BadRequest();
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+                return NotFound();
+
+            order.OrderStatus = status;
+            switch(status)
+            {
+                case Status.Shipped:
+                    order.ShippedDate = DateTime.UtcNow;
+                    break;
+                case Status.Fulfilled:
+                    order.FulfilledDate = DateTime.UtcNow;
+                    break;
+                case Status.Pending:
+                    order.ShippedDate = DateTime.MinValue;
+                    order.FulfilledDate = DateTime.MinValue;
+                    break;
+            }
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
 
     }
 }
