@@ -26,12 +26,12 @@ namespace ECommerceAPI.Data
         {
             modelBuilder.Entity<Order>()
                 .HasMany(e => e.Products)
-                .WithMany(e => e.Orders)
+                .WithMany("Orders")
                 .UsingEntity<ProductOrder>();
 
             modelBuilder.Entity<Cart>()
                 .HasMany(e => e.Products)
-                .WithMany(e => e.Carts)
+                .WithMany("Carts")
                 .UsingEntity<ProductCart>();
 
             base.OnModelCreating(modelBuilder);

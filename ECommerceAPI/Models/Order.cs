@@ -40,7 +40,7 @@ namespace ECommerceAPI.Models
     public enum Status
     {
         Pending,
+        Shipped,
         Fulfilled,
-        Shipped
     }
 }

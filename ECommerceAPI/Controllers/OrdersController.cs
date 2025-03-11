@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using System;
 using ECommerceAPI.Data;
 using ECommerceAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Controllers
 {
@@ -14,6 +18,94 @@ namespace ECommerceAPI.Controllers
         public OrdersController(EcommerceAPIContext context)
         {
             _context = context;
+        }
+
+        private int ReadOrderFromSQL(Order order, SqlDataReader reader, int orderId)
+        {
+            Product product;
+            int currentOrderId = (int)reader["OrderId"];
+            if (currentOrderId == orderId)
+            {
+                product = new Product()
+                {
+                    Id = reader.GetInt32("ProductId"),
+                    Description = reader.GetString("Description"),
+                    Price = reader.GetDecimal("Price"),
+                    Name = reader.GetString("ProductName")
+                };
+                order.Products.Add(product);
+                return currentOrderId;
+            }
+            order.Id = (int)reader["OrderId"];
+            order.OrderDate = reader.GetDateTime("OrderDate");
+            order.ShippedDate = reader.GetDateTime("ShippedDate");
+            order.FulfilledDate = reader.GetDateTime("FulfilledDate");
+
+            Customer customer = new Customer()
+            {
+                Id = reader.GetInt32("CustomerId"),
+                Name = reader.GetString("CustomerName"),
+                Email = reader.GetString("Email")
+            };
+            order.Customer = customer;
+
+            product = new Product()
+            {
+                Id = reader.GetInt32("ProductId"),
+                Description = reader.GetString("Description"),
+                Price = reader.GetDecimal("Price"),
+                Name = reader.GetString("ProductName")
+            };
+            order.Products.Add(product);
+            return currentOrderId;
+
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int limit = -1)
+        {
+            string connectionStr = "Server=(localdb)\\MSSQLLocalDB;Database=EcommerceAPIContext-1";
+            string procName = "get_orders";
+
+            try
+            {
+                using SqlConnection conn = new SqlConnection(connectionStr);
+                conn.Open();
+
+                using SqlCommand cmd = new SqlCommand(procName);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@limit", limit);
+
+                using SqlDataReader reader = cmd.ExecuteReader();
+                int orderId = 0;
+                Order order = new Order();
+                List<Order> orders = new List<Order>();
+
+                while (await reader.ReadAsync())
+                {
+                   // check whether we have reached a new order (i.e., whether the orderId has changed)
+                   // if not, then we add another product to the current order
+                   if (orderId == reader.GetInt32("OrderId"))
+                   {
+                        ReadOrderFromSQL(order, reader, orderId);
+                        continue;
+                   }
+                   // if the orderId has changed (i.e., we have reached a new order)
+                   // then reset the order variable and start updating for the new order
+                   orders.Add(order);
+                   order = new Order();
+                   orderId = ReadOrderFromSQL(order, reader, orderId);
+                }
+                // for the last order
+                orders.Add(order);
+
+                return orders;
+
+    
+            } catch(Exception)
+            {
+                throw;
+            }
         }
 
         private Order CreateInitialOrder(OrderDTO orderDTO)

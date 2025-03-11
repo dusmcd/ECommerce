@@ -7,10 +7,6 @@ namespace ECommerceAPI.Models
     {
         public int Id { get; set; }
 
-        public List<Order> Orders { get; set; } = new List<Order>();
-
-        public List<Cart> Carts { get; set; } = new List<Cart>();
-
         [Required]
         public string? Name { get; set; }
 

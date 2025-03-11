@@ -4,10 +4,6 @@ namespace ECommerceAPI.Models
 {
     public class ProductDTO : DTO
     {
-        public List<Order> Orders { get; set; } = new List<Order>();
-
-        public List<Cart> Carts { get; set; } = new List<Cart>();
-
         [Required]
         public string? Name { get; set; }
 
@@ -28,8 +24,6 @@ namespace ECommerceAPI.Models
 
             product!.Name = Name;
             product.Description = Description;
-            product.Orders = Orders;
-            product.Carts = Carts;
             product.ImageUrl = ImageUrl;
             product.Price = Price;
         }
