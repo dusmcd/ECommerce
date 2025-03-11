@@ -23,7 +23,7 @@ namespace ECommerceAPI.Controllers
         private int ReadOrderFromSQL(Order order, SqlDataReader reader, int orderId)
         {
             Product product;
-            int currentOrderId = (int)reader["OrderId"];
+            int currentOrderId = reader.GetInt32("OrderId");
             if (currentOrderId == orderId)
             {
                 product = new Product()
@@ -33,10 +33,10 @@ namespace ECommerceAPI.Controllers
                     Price = reader.GetDecimal("Price"),
                     Name = reader.GetString("ProductName")
                 };
-                order.Products.Add(product);
+                order!.Products.Add(product);
                 return currentOrderId;
             }
-            order.Id = (int)reader["OrderId"];
+            order.Id = reader.GetInt32("OrderId");
             order.OrderDate = reader.GetDateTime("OrderDate");
             order.ShippedDate = reader.GetDateTime("ShippedDate");
             order.FulfilledDate = reader.GetDateTime("FulfilledDate");
@@ -72,32 +72,36 @@ namespace ECommerceAPI.Controllers
                 using SqlConnection conn = new SqlConnection(connectionStr);
                 conn.Open();
 
-                using SqlCommand cmd = new SqlCommand(procName);
+                using SqlCommand cmd = new SqlCommand(procName, conn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@limit", limit);
 
                 using SqlDataReader reader = cmd.ExecuteReader();
                 int orderId = 0;
                 Order order = new Order();
                 List<Order> orders = new List<Order>();
+                int orderLimit = limit > 0 ? limit : int.MaxValue;
+                int orderCount = 0;
 
                 while (await reader.ReadAsync())
                 {
-                   // check whether we have reached a new order (i.e., whether the orderId has changed)
-                   // if not, then we add another product to the current order
-                   if (orderId == reader.GetInt32("OrderId"))
-                   {
+                    // check whether we have reached a new order (i.e., whether the orderId has changed)
+                    // if not, then we add another product to the current order
+                    if (orderId == reader.GetInt32("OrderId"))
+                    {
                         ReadOrderFromSQL(order, reader, orderId);
                         continue;
-                   }
-                   // if the orderId has changed (i.e., we have reached a new order)
-                   // then reset the order variable and start updating for the new order
-                   orders.Add(order);
-                   order = new Order();
-                   orderId = ReadOrderFromSQL(order, reader, orderId);
+                    }
+
+                    // if the orderId has changed (i.e., we have reached a new order)
+                    // then reset the order variable and start updating for the new order
+                    orderCount++;
+                    if (orderCount > orderLimit)
+                        break;
+                   
+                    order = orderId == 0 ? order : new Order();
+                    orderId = ReadOrderFromSQL(order, reader, orderId);
+                    orders.Add(order);
                 }
-                // for the last order
-                orders.Add(order);
 
                 return orders;
 
