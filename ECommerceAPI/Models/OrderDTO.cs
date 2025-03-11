@@ -6,6 +6,8 @@ namespace ECommerceAPI.Models
     {
         public int Id { get; set; }
         public int Quantity { get; set; }
+
+        public bool Delete { get; set; }
     }
     public class OrderDTO : DTO
     {

@@ -136,6 +136,7 @@ namespace ECommerceAPI.Controllers
             order.OrderDate = timeNow;
             order.CreatedAt = timeNow;
             order.UpdatedAt = timeNow;
+            order.OrderStatus = Status.Pending;
 
             _context.Orders.Add(order);
 
@@ -149,7 +150,10 @@ namespace ECommerceAPI.Controllers
             foreach(var productInfo in orderDTO.Products)
             {
                 // find the entry that matches the productId for this order (there should only be one)
-                var entityToUpdate = productOrders.Where(po => po.ProductId == productInfo.Id).First();
+                var entityToUpdate = productOrders.Where(po => po.ProductId == productInfo.Id).FirstOrDefault();
+                if (entityToUpdate == null)
+                    continue;
+
                 entityToUpdate.Quantity = productInfo.Quantity;
                 _context.ProductsOrders.Update(entityToUpdate);
             }
@@ -172,6 +176,56 @@ namespace ECommerceAPI.Controllers
 
             await _context.SaveChangesAsync();
             return Created();
+        }
+
+        private async Task<Order> RemoveOrderProducts(int id, OrderDTO orderDTO)
+        {
+            var order = await _context.Orders
+                .Where(o => o.Id == id)
+                .Include(o => o.Products)
+                .FirstAsync();
+
+            if (order == null)
+                return null!;
+
+            foreach(var productInfo in orderDTO.Products)
+            {
+                var product = order.Products.Where(p => p.Id == productInfo.Id).First();
+                if (product == null)
+                    continue;
+
+                if (productInfo.Delete)
+                {
+                    order.Products.Remove(product);
+                }
+            }
+            order.UpdatedAt = DateTime.UtcNow;
+
+            return order;
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOrderProducts(int id, OrderDTO orderDTO)
+        {
+            if (id == 0 || orderDTO == null)
+                return BadRequest();
+
+            var order = await RemoveOrderProducts(id, orderDTO);
+            if (order == null)
+                return NotFound();
+
+            if (order.Products.Count == 0)
+                return BadRequest("an order must have at least one product");
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            UpdateQuantities(orderDTO, order.Id);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+
         }
 
     }
