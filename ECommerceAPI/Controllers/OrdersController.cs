@@ -31,9 +31,10 @@ namespace ECommerceAPI.Controllers
                     Id = reader.GetInt32("ProductId"),
                     Description = reader.GetString("Description"),
                     Price = reader.GetDecimal("Price"),
-                    Name = reader.GetString("ProductName")
+                    Name = reader.GetString("ProductName"),
+                    Quantity = reader.GetInt32("Quantity")
                 };
-                order!.Products.Add(product);
+                order.Products.Add(product);
                 return currentOrderId;
             }
             order.Id = reader.GetInt32("OrderId");
@@ -54,7 +55,8 @@ namespace ECommerceAPI.Controllers
                 Id = reader.GetInt32("ProductId"),
                 Description = reader.GetString("Description"),
                 Price = reader.GetDecimal("Price"),
-                Name = reader.GetString("ProductName")
+                Name = reader.GetString("ProductName"),
+                Quantity = reader.GetInt32("Quantity")
             };
             order.Products.Add(product);
             return currentOrderId;

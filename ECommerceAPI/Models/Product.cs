@@ -15,6 +15,9 @@ namespace ECommerceAPI.Models
 
         public string? ImageUrl { get; set; }
 
+        [NotMapped]
+        public int Quantity { get; set; }
+
         [Required, Column(TypeName = "decimal(9, 2)")]
         public decimal Price { get; set; }
 
