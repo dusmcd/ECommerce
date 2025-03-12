@@ -42,5 +42,6 @@ namespace ECommerceAPI.Models
         Pending,
         Shipped,
         Fulfilled,
+        Cancelled
     }
 }

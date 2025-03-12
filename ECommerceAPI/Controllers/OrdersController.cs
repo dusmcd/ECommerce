@@ -54,6 +54,9 @@ namespace ECommerceAPI.Controllers
                 case 2:
                     order.OrderStatus = Status.Fulfilled;
                     break;
+                case 3:
+                    order.OrderStatus = Status.Cancelled;
+                    break;
             }
 
             Customer customer = new Customer()
@@ -182,7 +185,8 @@ namespace ECommerceAPI.Controllers
             var order = CreateInitialOrder(orderDTO);
             if (order == null)
                 return BadRequest();
-
+            if (!ModelState.IsValid)
+                return BadRequest("constraints for Orders table violated");
             
             await _context.SaveChangesAsync();
 
@@ -228,6 +232,9 @@ namespace ECommerceAPI.Controllers
             if (order == null)
                 return NotFound();
 
+            if (!ModelState.IsValid)
+                return BadRequest("constraints for Orders table violated");
+
             if (order.Products.Count == 0)
                 return BadRequest("an order must have at least one product");
 
@@ -266,7 +273,49 @@ namespace ECommerceAPI.Controllers
                     order.FulfilledDate = DateTime.MinValue;
                     break;
             }
+            order.UpdatedAt = DateTime.UtcNow;
             _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelOrder(int id)
+        {
+            if (id == 0)
+                return BadRequest();
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+                return NotFound();
+
+            // enforce 30 day cancel policy
+            DateTime today = DateTime.UtcNow;
+            TimeSpan timeSpan = today.Subtract(order.OrderDate);
+            if (Math.Abs(timeSpan.TotalDays) > 30)
+                return BadRequest("orders cannot be cancelled after 30 days");
+
+            order.OrderStatus = Status.Cancelled;
+            order.UpdatedAt = today;
+            _context.Orders.Update(order);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            if (id == 0)
+                return BadRequest();
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+                return NotFound();
+
+            _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 
             return Ok();

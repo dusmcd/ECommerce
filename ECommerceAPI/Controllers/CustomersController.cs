@@ -28,6 +28,19 @@ namespace ECommerceAPI.Controllers
             return await _context.Customers.ToListAsync();
         }
 
+        [HttpGet("session/{sessionId}")]
+        public async Task<ActionResult<Customer>> GetCustomerBySessionId(string sessionId)
+        {
+            if (sessionId.IsNullOrEmpty())
+                return BadRequest();
+
+            var customer = await _context.Customers.Where(c => c.SessionId == sessionId).FirstOrDefaultAsync();
+            if (customer == null)
+                return NotFound();
+
+            return customer;
+        }
+
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<Customer>>> SearchCustomers(string? name)
         {
