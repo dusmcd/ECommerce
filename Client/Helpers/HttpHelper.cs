@@ -16,6 +16,7 @@ namespace Client.Helpers
         private readonly HttpClient _httpClient = new();
 
         public HttpHelper() {
+            // this will need to change in production, but is fine for now
             _httpClient.BaseAddress = new Uri("https://localhost:7237/");
         }
 

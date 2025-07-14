@@ -18,5 +18,19 @@ namespace Client.Controllers
             List<CustomerViewModel> customers = await _http.GetAsync<List<CustomerViewModel>>("/api/customers");
             return View(customers);
         }
+
+        public async Task<IActionResult> Details(int id) {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            CustomerViewModel customer = await _http.GetAsync<CustomerViewModel>($"/api/customer/{id}");
+            if (customer == null)
+            {
+                return NotFound();
+            }
+            return View(customer);
+        }
     }
 }

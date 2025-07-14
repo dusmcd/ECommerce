@@ -1,5 +1,31 @@
-﻿@{
+﻿@model List<Client.Models.CustomerViewModel>
+@{
     ViewData["Title"] = "Customers";
 }
 
-<h1>Customers Home Page</h1>
+<h1>Customers</h1>
+@if (Model?.Count < 1)
+{
+    <p>No customers found</p>
+} else {
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(customers => customers[0].Id)</th>
+            <th>@Html.DisplayNameFor(customers => customers[0].Name)</th>
+            <th>@Html.DisplayNameFor(customers => customers[0].Email)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var customer in Model!)
+        {
+            <tr>
+                <td>@Html.DisplayFor(item => customer.Id)</td>
+                <td>@Html.DisplayFor(item => customer.Name)</td>
+                <td>@Html.DisplayFor(item => customer.Email)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
