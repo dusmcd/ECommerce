@@ -18,6 +18,8 @@ namespace ECommerceAPI.Data
 
         public DbSet<ProductCart> ProductsCarts { get; set; } = default!;
 
+        public DbSet<Cart> Carts { get; set; } = default!;
+
         public DbSet<InventoryLog> InventoryLog { get; set; } = default!;
 
         public DbSet<User> Users { get; set; } = default!;

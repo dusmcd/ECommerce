@@ -4,6 +4,7 @@ using ECommerceAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceAPI.Migrations
 {
     [DbContext(typeof(EcommerceAPIContext))]
-    partial class EcommerceAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250312132823_Carts")]
+    partial class Carts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +37,6 @@ namespace ECommerceAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -214,10 +214,10 @@ namespace ECommerceAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CartId")
+                    b.Property<int>("CartsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("ProductsId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -225,9 +225,9 @@ namespace ECommerceAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
+                    b.HasIndex("CartsId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductsId");
 
                     b.ToTable("ProductsCarts");
                 });
@@ -333,13 +333,13 @@ namespace ECommerceAPI.Migrations
                 {
                     b.HasOne("ECommerceAPI.Models.Cart", null)
                         .WithMany()
-                        .HasForeignKey("CartId")
+                        .HasForeignKey("CartsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerceAPI.Models.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

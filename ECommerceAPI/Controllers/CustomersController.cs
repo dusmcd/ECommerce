@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ECommerceAPI.Data;
 using ECommerceAPI.Models;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Cors;
 
 namespace ECommerceAPI.Controllers
 {
@@ -76,6 +77,7 @@ namespace ECommerceAPI.Controllers
         }
 
         [HttpPost]
+        [EnableCors("AllowFrontend")]
         public async Task<IActionResult> CreateCustomer(CustomerDTO customerDTO)
         {
             if (customerDTO == null)

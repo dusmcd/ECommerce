@@ -11,10 +11,18 @@ namespace ECommerceAPI.Models
 
         public List<Product> Products { get; set; } = new List<Product>();
 
+        public CartStatus Status { get; set; }
+
         [Required, DataType(DataType.Time)]
         public DateTime CreatedAt { get; set; }
 
         [Required, DataType(DataType.Time)]
         public DateTime UpdatedAt { get; set; }
+    }
+
+    public enum CartStatus
+    {
+        Active,
+        Inactive
     }
 }

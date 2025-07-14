@@ -1,0 +1,18 @@
+﻿@model Client.Models.CustomerViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Joe Walsh is a customer here. Here is the proof:</p>
+    <p>
+        ID: @Html.DisplayFor(m => m.Id)
+    </p>
+    <p>
+        Name: @Html.DisplayFor(m => m.Name)
+    </p>
+    <p>
+        Email: @Html.DisplayFor(m => m.Email)
+    </p>
+</div>
