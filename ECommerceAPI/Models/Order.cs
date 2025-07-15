@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ECommerceAPI.Models
 {
     public class Order
     {
         public int Id { get; set; }
+
+        public int CustomerId { get; set; }
 
         [Required]
         public Customer Customer { get; set; } = default!;

@@ -6,6 +6,8 @@ namespace ECommerceAPI.Models
     {
         public string? Name { get; set; }
 
+        public List<OrderDTO> Orders { get; set; } = new List<OrderDTO>();
+
         [Required]
         public string? Email { get; set; }
 

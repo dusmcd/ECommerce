@@ -5,12 +5,16 @@ namespace ECommerceAPI.Models
     public struct ProductInfo
     {
         public int Id { get; set; }
+
+        public string? Name { get; set; }
         public int Quantity { get; set; }
 
         public bool Delete { get; set; }
     }
     public class OrderDTO : DTO
     {
+        public int Id { get; set; }
+
         [Required]
         public int CustomerId { get; set; }
 

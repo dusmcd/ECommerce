@@ -64,16 +64,58 @@ namespace ECommerceAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        public async Task<ActionResult<CustomerDTO>> GetCustomer(int id)
         {
             if (id == 0)
                 return BadRequest();
 
+            var orders = await _context.Orders
+                .Take(10)
+                .Where(o => o.CustomerId == id)
+                .Include(o => o.Products)
+                .OrderBy(o => o.OrderDate)
+                .ToListAsync();
+
+
+            List<OrderDTO> ordersDTO = new List<OrderDTO>();
+            foreach(var order in orders)
+            {
+
+                List<ProductInfo> products = new();
+                foreach(var product in order.Products)
+                {
+                    ProductOrder productOrder = _context.ProductsOrders
+                        .Where(po => po.OrderId == order.Id && po.ProductId == product.Id)
+                        .First();
+                    products.Add(new ProductInfo { Id = product.Id, Name = product.Name, Quantity = productOrder.Quantity });
+                }
+                OrderDTO orderDTO = new OrderDTO
+                {
+                    Id = order.Id,
+                    Products = products
+                };
+                ordersDTO.Add(orderDTO);
+            }
+
             var customer = await _context.Customers.FindAsync(id);
+
             if (customer == null)
                 return NotFound();
 
-            return customer;
+            CustomerDTO customerDTO = new CustomerDTO
+            {
+                Name = customer.Name,
+                Email = customer.Email,
+                PhoneNumber = customer.PhoneNumber,
+                Address1 = customer.Address1,
+                Address2 = customer.Address2,
+                City = customer.City,
+                State = customer.State,
+                ZipCode = customer.ZipCode,
+                Orders = ordersDTO
+            };
+
+            return customerDTO;
         }
 
         [HttpPost]
