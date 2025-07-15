@@ -20,7 +20,11 @@
         @foreach(var customer in Model!)
         {
             <tr>
-                <td>@Html.DisplayFor(item => customer.Id)</td>
+                <td>
+                    <a href="Customers/Details/@customer.Id">
+                        @Html.DisplayFor(item => customer.Id)
+                    </a>
+                </td>
                 <td>@Html.DisplayFor(item => customer.Name)</td>
                 <td>@Html.DisplayFor(item => customer.Email)</td>
             </tr>

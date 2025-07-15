@@ -20,13 +20,27 @@ namespace ECommerceAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers(int limit = -1)
+        public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers(int limit = -1)
         {
            if (limit > 0)
            {
-                return await _context.Customers.Take(limit).ToArrayAsync();
+                return await _context.Customers
+                    .Take(limit)
+                    .Select(c => new CustomerDTO
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Email = c.Email
+                    }).ToListAsync();
            }
-            return await _context.Customers.ToListAsync();
+
+            return await _context.Customers
+                 .Select(c => new CustomerDTO
+                 {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Email = c.Email,
+                 }).ToListAsync();
         }
 
         [HttpGet("session/{sessionId}")]
@@ -74,6 +88,7 @@ namespace ECommerceAPI.Controllers
                 .Include(c => c.Orders)
                 .Select(c => new CustomerDTO
                 {
+                    Id = c.Id,
                     Name = c.Name,
                     Email = c.Email,
                     PhoneNumber = c.PhoneNumber,

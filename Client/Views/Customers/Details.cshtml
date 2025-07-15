@@ -1,1 +1,32 @@
 ﻿@model Client.Models.CustomerViewModel
+
+<a href="/Customers">Back to customer list</a>
+<h1>Customer Profile</h1>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Html.DisplayFor(m => m.Name)</h5>
+        <p>@Html.DisplayFor(m => m.Address1)</p>
+        <p>@Html.DisplayFor(m => m.Address2)</p>
+        <p>@Html.DisplayFor(m => m.City)</p>
+    </div>
+</div>
+
+<h2>Orders</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.Orders[0].Id)</th>
+            <th>@Html.DisplayNameFor(m => m.Orders[0].OrderDate)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var order in Model.Orders)
+        {
+            <tr>
+                <td>@Html.DisplayFor(o => order.Id)</td>
+                <td>@Html.DisplayFor(o => order.OrderDate)</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc; 
 using Client.Helpers;
 using Client.Models;
 
 namespace Client.Controllers
-{
-    public class CustomersController : Controller
-    {
+{ 
+    public class CustomersController : Controller 
+    { 
         private readonly IHttpHelper _http;
-
         public CustomersController(IHttpHelper http)
         {
             _http = http;
@@ -20,12 +19,11 @@ namespace Client.Controllers
         }
 
         public async Task<IActionResult> Details(int id) {
-            if (id == 0)
-            {
+            if (id == 0) {
                 return BadRequest();
             }
 
-            CustomerViewModel customer = await _http.GetAsync<CustomerViewModel>($"/api/customer/{id}");
+            CustomerViewModel customer = await _http.GetAsync<CustomerViewModel>($"/api/customers/{id}");
             if (customer == null)
             {
                 return NotFound();
