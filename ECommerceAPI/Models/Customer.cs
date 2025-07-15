@@ -9,6 +9,8 @@ namespace ECommerceAPI.Models
         [Required]
         public string? Name { get; set; }
 
+        public List<Order> Orders { get; set; } = [];
+
         [Required]
         public string? Email { get; set; }
 

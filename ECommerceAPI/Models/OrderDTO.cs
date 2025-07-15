@@ -18,6 +18,11 @@ namespace ECommerceAPI.Models
         [Required]
         public int CustomerId { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTime OrderDate { get; set; }
+
+        public Status OrderStatus { get; set; }
+
         [Required]
         public List<ProductInfo> Products { get; set; } = new List<ProductInfo>();
 

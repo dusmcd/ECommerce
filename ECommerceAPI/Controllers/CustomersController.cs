@@ -69,53 +69,35 @@ namespace ECommerceAPI.Controllers
             if (id == 0)
                 return BadRequest();
 
-            var orders = await _context.Orders
-                .Take(10)
-                .Where(o => o.CustomerId == id)
-                .Include(o => o.Products)
-                .OrderBy(o => o.OrderDate)
-                .ToListAsync();
-
-
-            List<OrderDTO> ordersDTO = new List<OrderDTO>();
-            foreach(var order in orders)
-            {
-
-                List<ProductInfo> products = new();
-                foreach(var product in order.Products)
+            var customer = await _context.Customers
+                .Where(c => c.Id == id)
+                .Include(c => c.Orders)
+                .Select(c => new CustomerDTO
                 {
-                    ProductOrder productOrder = _context.ProductsOrders
-                        .Where(po => po.OrderId == order.Id && po.ProductId == product.Id)
-                        .First();
-                    products.Add(new ProductInfo { Id = product.Id, Name = product.Name, Quantity = productOrder.Quantity });
-                }
-                OrderDTO orderDTO = new OrderDTO
-                {
-                    Id = order.Id,
-                    Products = products
-                };
-                ordersDTO.Add(orderDTO);
-            }
-
-            var customer = await _context.Customers.FindAsync(id);
+                    Name = c.Name,
+                    Email = c.Email,
+                    PhoneNumber = c.PhoneNumber,
+                    Address1 = c.Address1,
+                    Address2 = c.Address2,
+                    City = c.City,
+                    State = c.State,
+                    ZipCode = c.ZipCode,
+                    Orders = c.Orders
+                        .Take(10)
+                        .Select(o => new OrderDTO
+                        {
+                            Id = o.Id,
+                            OrderDate = o.OrderDate,
+                            OrderStatus = o.OrderStatus,
+                        })
+                        .OrderBy(o => o.OrderDate)
+                        .ToList()
+                }).FirstAsync();
 
             if (customer == null)
                 return NotFound();
 
-            CustomerDTO customerDTO = new CustomerDTO
-            {
-                Name = customer.Name,
-                Email = customer.Email,
-                PhoneNumber = customer.PhoneNumber,
-                Address1 = customer.Address1,
-                Address2 = customer.Address2,
-                City = customer.City,
-                State = customer.State,
-                ZipCode = customer.ZipCode,
-                Orders = ordersDTO
-            };
-
-            return customerDTO;
+            return customer;
         }
 
         [HttpPost]
