@@ -80,6 +80,35 @@ namespace ECommerceAPI.Controllers
 
         }
 
+        [HttpGet("{id}/products")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductsOfOrder(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var products = await _context.ProductsOrders
+                .Where(po => po.OrderId == id)
+                .Include(po => po.Product)
+                .Select(po => new ProductDTO
+                {
+                    Id = po.Id,
+                    Name = po.Product.Name,
+                    Quantity = po.Quantity,
+                    Description = po.Product.Description,
+                    ImageUrl = po.Product.ImageUrl,
+                    Price = po.Product.Price,
+                }).ToListAsync();
+
+            if (products == null || products.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return products;
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int limit = -1)
         {
