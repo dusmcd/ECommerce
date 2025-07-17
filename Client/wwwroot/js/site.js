@@ -11,17 +11,28 @@ function getProductsForOrder(id, element) {
         },
         success: (data, textStatus, jqXHR) => {
             // show data
+            let list = "<ul>";
+            data.forEach(product => {
+                const content = `Name: ${product.name}, Description: ${product.description}, Price: $${product.price}, Quantity: ${product.quantity}`;
+                const listItem = `<li>${content}</li>`;
+                list += listItem;
+            });
+            list += "</ul>";
+
             element.find(".spinner-border").hide();
-            element.find(".accordion-body").append("<p>Order and product data</p>")
-            console.log("data from server: ", data);
+            element.find(".accordion-body").append(list);
+            element.data("fetched", true);
         }
 
-    })
+    });
 }
 
 $(function () {
     $(".accordion-item").on("click", function(evt) {
         const element = $(this);
+        if (element.data("fetched")) {
+            return;
+        }
         if (evt.target.className === "accordion-button") {
             const id = element.data("id");
             getProductsForOrder(id, element);
