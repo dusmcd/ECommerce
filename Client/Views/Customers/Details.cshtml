@@ -13,20 +13,43 @@
 </div>
 
 <h2>Orders</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.Orders[0].Id)</th>
-            <th>@Html.DisplayNameFor(m => m.Orders[0].OrderDate)</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var order in Model.Orders)
-        {
-            <tr>
-                <td>@Html.DisplayFor(o => order.Id)</td>
-                <td>@Html.DisplayFor(o => order.OrderDate)</td>
-            </tr>
+<div class="accordion" id="customer-orders">
+    @foreach(var order in Model.Orders)
+    {
+            string status;
+            switch(order.Status)
+            {
+                case 0:
+                    status = "Pending";
+                    break;
+                case 1:
+                    status = "Shipped";
+                    break;
+                case 2:
+                    status = "Fulfilled";
+                    break;
+                case 3:
+                    status = "Cancelled";
+                    break;
+                default:
+                    status = "Error";
+                    break;
         }
-    </tbody>
-</table>
+        <div class="accordion-item" data-id="@order.Id">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed"  type="button" data-bs-toggle="collapse" data-bs-target="#order-@order.Id" aria-expanded="false" aria-controls="order-@order.Id">
+                    Order Date: @Html.DisplayFor(item => order.OrderDate)
+                </button>
+            </h2>
+            <div id="order-@order.Id" class="accordion-collapse collapse" data-bs-parent="#customer-orders">
+                <div class="accordion-body">
+                    <p>Order status: @status</p>
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    }
+    
+</div>
